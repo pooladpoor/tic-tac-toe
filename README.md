@@ -8,7 +8,6 @@ It must be run in the Windows CMD environment
 # prerequisites
 
 Installing the following packages:
-
-  termcolor
+  1)termcolor
 
 
