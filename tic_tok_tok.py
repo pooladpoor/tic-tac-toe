@@ -1,3 +1,5 @@
+import time
+
 from termcolor import colored
 from os import system
 from time import sleep
@@ -55,68 +57,71 @@ def mov_sys():
                 return j
 
 
-def tic_tok_tok():
+def starting(choice):
+    s = 3
+    players = ('You' if choice == 1 else 'plyer 1', 'computer' if choice == 1 else 'plyer 2')
+    while s != 0:
+        system('cls')
+        print(f"{players[0]}: {colored('x', 'red')}\n"
+              f"{players[1]}: {colored('o', 'blue')}")
+        print(f'Starting the game:({s})')
+        sleep(1)
+        s -= 1
+
+
+def get_choice():
+    """getting the choice"""
+    print(' 1) Solitaire game\n'
+          ' 2) Double game\n'
+          ' 3) Exit')
     while True:
-        print(' 1) Solitaire game\n'
-              ' 2) Double game\n'
-              ' 3) Exit')
         choice = input('your choice:')
-        print('-' * 30)
         if choice not in ['1', '2', '3']:
-            print('wrong! try again (1-3)')
+            print(f'{colored("wrong!", "red")} try again (1-3)')
             continue
-        else:
-            choice = int(choice)
-            break
-    # _________________________________________
-    if choice == 1:  # Playing with the computer , starting game
-        s = 3
-        while s != 0:
+        return int(choice)
+
+
+def tic_tok_tok():
+    if (choice := get_choice()) != 3:
+        starting(choice)
+        m = 0
+        while m <= 8:
             system('cls')
-            print(f"You: {colored('x', 'red')}\n"
-                  f"Computer: {colored('o', 'blue')}")
-            print(f'Starting the game:({s})')
-            sleep(1)
-            s -= 1
-    # ______________________________________________
-    m = 0
-    while m <= 8:
-        system('cls')
-        y = mov(m)
-        move = -1
+            y = mov(m)
+            move = -1
+            try:
+                if choice == 1:  # Playing with the computer
+                    if y == colored('x', 'red'):
+                        print_bord()
+                        move = int(input(f'player move:'))
+                    else:
+                        move = mov_sys()
 
-        if choice == 1:  # Playing with the computer
-            if y == colored('x', 'red'):
+                elif choice == 2:  # Playing with others
+                    print_bord()
+                    move = int(input(f'player {y} move:'))
+
+                if move not in bord:
+                    raise ValueError('wrong! try again')
+
+            except ValueError:
+                print("wrong! try again")
+                time.sleep(2)
+                continue
+
+            edit_bord(move, y)
+
+            if check_win(y, bord):
+                print('_____', y, colored('won', 'green'), '_____')
                 print_bord()
-                move = input(f'player move:')
-            else:
-                move = str(mov_sys())
+                break
+            m += 1
 
-        elif choice == 2:  # Playing with others
+        else:
+            system('cls')
+            print('_____', colored('alike', 'yellow'), '_____')
             print_bord()
-            move = input(f'player {y} move:')
-
-        if choice == 3:  # get out
-            break
-
-        if move not in [str(i) for i in bord]:
-            print("wrong! try again")
-            sleep(2)
-            continue
-        move = int(move)
-
-        edit_bord(move, y)
-
-        if check_win(y, bord):
-            print('_____', y, colored('won', 'green'), '_____')
-            print_bord()
-            break
-        m += 1
-
-    else:
-        system('cls')
-        print('_____', colored('alike', 'yellow'), '_____')
-        print_bord()
     # --------------------------------------------------
     while True:
         a = input("you want to exit the gami? (y/n)")
